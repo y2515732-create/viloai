@@ -10,6 +10,7 @@ export const usersTable = pgTable("vilo_users", {
   viloNumber: text("vilo_number"),
   twilioSid: text("twilio_sid"),
   elevenLabsPhoneId: text("eleven_labs_phone_id"),
+  stripeSessionId: text("stripe_session_id").unique(),
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

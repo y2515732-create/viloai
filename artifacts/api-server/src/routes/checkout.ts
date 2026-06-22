@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Stripe from "stripe";
+import rateLimit from "express-rate-limit";
 import { CreateCheckoutBody } from "@workspace/api-zod";
 
 const router = Router();
@@ -8,7 +9,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
   apiVersion: "2026-05-27.dahlia",
 });
 
-router.post("/checkout", async (req, res) => {
+// Fix #4: Rate limit — max 5 checkout attempts per IP per 15 minutes.
+// Each successful attempt can trigger a real Twilio number purchase.
+const checkoutLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many checkout attempts. Please try again later." },
+});
+
+router.post("/checkout", checkoutLimiter, async (req, res) => {
   const parsed = CreateCheckoutBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "userName and userEmail are required" });
@@ -38,9 +49,13 @@ router.post("/checkout", async (req, res) => {
       mode: "payment",
       success_url: `${origin}/success?email=${encodeURIComponent(userEmail)}`,
       cancel_url: `${origin}/cancel`,
+      // Fix #3: Always collect email via Stripe's built-in collector AND
+      // store it in metadata so the webhook never has to rely solely on
+      // session.customer_email (which can be null).
       customer_email: userEmail,
       metadata: {
         userName,
+        userEmail,                    // redundant with customer_email but guaranteed non-null
         userPhone: userPhone ?? "",
       },
     });
