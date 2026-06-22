@@ -33,21 +33,17 @@ export const CreateCheckoutResponse = zod.object({
 
 
 /**
- * Returns user provisioning status and assigned Vilo number
- * @summary Get user by email
+ * Returns provisioning status and assigned Vilo number. Keyed on the Stripe checkout session ID (unguessable) rather than email, so no personal data is exposed to unauthenticated callers.
+
+ * @summary Get provisioning status by Stripe session ID
  */
-export const GetUserParams = zod.object({
-  "email": zod.coerce.string()
+export const GetProvisioningStatusParams = zod.object({
+  "sessionId": zod.coerce.string()
 })
 
-export const GetUserResponse = zod.object({
-  "id": zod.number(),
-  "name": zod.string(),
-  "email": zod.string(),
-  "phone": zod.string().nullish(),
-  "viloNumber": zod.string().nullish(),
+export const GetProvisioningStatusResponse = zod.object({
   "status": zod.enum(['pending', 'active', 'failed']),
-  "createdAt": zod.string()
+  "viloNumber": zod.string().nullish()
 })
 
 

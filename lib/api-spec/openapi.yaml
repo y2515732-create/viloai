@@ -62,27 +62,30 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
-  /users/{email}:
+  /users/session/{sessionId}:
     get:
-      operationId: getUser
+      operationId: getProvisioningStatus
       tags: [users]
-      summary: Get user by email
-      description: Returns user provisioning status and assigned Vilo number
+      summary: Get provisioning status by Stripe session ID
+      description: >
+        Returns provisioning status and assigned Vilo number.
+        Keyed on the Stripe checkout session ID (unguessable) rather than
+        email, so no personal data is exposed to unauthenticated callers.
       parameters:
-        - name: email
+        - name: sessionId
           in: path
           required: true
           schema:
             type: string
       responses:
         "200":
-          description: User found
+          description: Status found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ViloUser"
+                $ref: "#/components/schemas/ProvisioningStatus"
         "404":
-          description: User not found
+          description: Session not found
           content:
             application/json:
               schema:
@@ -143,25 +146,15 @@ components:
         url:
           type: string
 
-    ViloUser:
+    ProvisioningStatus:
       type: object
-      required: [id, name, email, status, createdAt]
+      required: [status]
       properties:
-        id:
-          type: integer
-        name:
-          type: string
-        email:
-          type: string
-        phone:
-          type: ["string", "null"]
-        viloNumber:
-          type: ["string", "null"]
         status:
           type: string
           enum: [pending, active, failed]
-        createdAt:
-          type: string
+        viloNumber:
+          type: ["string", "null"]
 
     AdminViloUser:
       type: object

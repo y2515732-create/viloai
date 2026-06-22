@@ -25,7 +25,7 @@ import type {
   CheckoutResult,
   ErrorResponse,
   HealthStatus,
-  ViloUser
+  ProvisioningStatus
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -190,21 +190,22 @@ export const useCreateCheckout = <TError = ErrorType<ErrorResponse>,
       return useMutation(getCreateCheckoutMutationOptions(options));
     }
 
-export const getGetUserUrl = (email: string,) => {
+export const getGetProvisioningStatusUrl = (sessionId: string,) => {
 
 
 
 
-  return `/api/users/${email}`
+  return `/api/users/session/${sessionId}`
 }
 
 /**
- * Returns user provisioning status and assigned Vilo number
- * @summary Get user by email
- */
-export const getUser = async (email: string, options?: RequestInit): Promise<ViloUser> => {
+ * Returns provisioning status and assigned Vilo number. Keyed on the Stripe checkout session ID (unguessable) rather than email, so no personal data is exposed to unauthenticated callers.
 
-  return customFetch<ViloUser>(getGetUserUrl(email),
+ * @summary Get provisioning status by Stripe session ID
+ */
+export const getProvisioningStatus = async (sessionId: string, options?: RequestInit): Promise<ProvisioningStatus> => {
+
+  return customFetch<ProvisioningStatus>(getGetProvisioningStatusUrl(sessionId),
   {
     ...options,
     method: 'GET'
@@ -217,45 +218,45 @@ export const getUser = async (email: string, options?: RequestInit): Promise<Vil
 
 
 
-export const getGetUserQueryKey = (email: string,) => {
+export const getGetProvisioningStatusQueryKey = (sessionId: string,) => {
     return [
-    `/api/users/${email}`
+    `/api/users/session/${sessionId}`
     ] as const;
     }
 
 
-export const getGetUserQueryOptions = <TData = Awaited<ReturnType<typeof getUser>>, TError = ErrorType<ErrorResponse>>(email: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetProvisioningStatusQueryOptions = <TData = Awaited<ReturnType<typeof getProvisioningStatus>>, TError = ErrorType<ErrorResponse>>(sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProvisioningStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetUserQueryKey(email);
+  const queryKey =  queryOptions?.queryKey ?? getGetProvisioningStatusQueryKey(sessionId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUser>>> = ({ signal }) => getUser(email, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getProvisioningStatus>>> = ({ signal }) => getProvisioningStatus(sessionId, { signal, ...requestOptions });
 
 
 
 
 
-   return  { queryKey, queryFn, enabled: !!(email), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, enabled: !!(sessionId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getProvisioningStatus>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export type GetUserQueryResult = NonNullable<Awaited<ReturnType<typeof getUser>>>
-export type GetUserQueryError = ErrorType<ErrorResponse>
+export type GetProvisioningStatusQueryResult = NonNullable<Awaited<ReturnType<typeof getProvisioningStatus>>>
+export type GetProvisioningStatusQueryError = ErrorType<ErrorResponse>
 
 
 /**
- * @summary Get user by email
+ * @summary Get provisioning status by Stripe session ID
  */
 
-export function useGetUser<TData = Awaited<ReturnType<typeof getUser>>, TError = ErrorType<ErrorResponse>>(
- email: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getUser>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export function useGetProvisioningStatus<TData = Awaited<ReturnType<typeof getProvisioningStatus>>, TError = ErrorType<ErrorResponse>>(
+ sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProvisioningStatus>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  const queryOptions = getGetUserQueryOptions(email,options)
+  const queryOptions = getGetProvisioningStatusQueryOptions(sessionId,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

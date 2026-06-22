@@ -20,25 +20,19 @@ export interface CheckoutResult {
   url: string;
 }
 
-export type ViloUserStatus = typeof ViloUserStatus[keyof typeof ViloUserStatus];
+export type ProvisioningStatusStatus = typeof ProvisioningStatusStatus[keyof typeof ProvisioningStatusStatus];
 
 
-export const ViloUserStatus = {
+export const ProvisioningStatusStatus = {
   pending: 'pending',
   active: 'active',
   failed: 'failed',
 } as const;
 
-export interface ViloUser {
-  id: number;
-  name: string;
-  email: string;
-  /** @nullable */
-  phone?: string | null;
+export interface ProvisioningStatus {
+  status: ProvisioningStatusStatus;
   /** @nullable */
   viloNumber?: string | null;
-  status: ViloUserStatus;
-  createdAt: string;
 }
 
 export type AdminViloUserStatus = typeof AdminViloUserStatus[keyof typeof AdminViloUserStatus];

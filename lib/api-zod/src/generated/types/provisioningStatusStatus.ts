@@ -6,10 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ViloUserStatus = typeof ViloUserStatus[keyof typeof ViloUserStatus];
+export type ProvisioningStatusStatus = typeof ProvisioningStatusStatus[keyof typeof ProvisioningStatusStatus];
 
 
-export const ViloUserStatus = {
+export const ProvisioningStatusStatus = {
   pending: 'pending',
   active: 'active',
   failed: 'failed',

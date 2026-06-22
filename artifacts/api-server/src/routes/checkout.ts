@@ -47,7 +47,7 @@ router.post("/checkout", checkoutLimiter, async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/success?email=${encodeURIComponent(userEmail)}`,
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cancel`,
       // Fix #3: Always collect email via Stripe's built-in collector AND
       // store it in metadata so the webhook never has to rely solely on

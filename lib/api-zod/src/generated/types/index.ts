@@ -13,5 +13,5 @@ export * from './checkoutInput';
 export * from './checkoutResult';
 export * from './errorResponse';
 export * from './healthStatus';
-export * from './viloUser';
-export * from './viloUserStatus';
+export * from './provisioningStatus';
+export * from './provisioningStatusStatus';
