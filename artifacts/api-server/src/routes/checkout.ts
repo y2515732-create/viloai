@@ -29,10 +29,14 @@ router.post("/checkout", checkoutLimiter, async (req, res) => {
   const { userName, userEmail, userPhone } = parsed.data;
 
   try {
+    // APP_URL is set on Render (and any non-Replit host).
+    // REPLIT_DOMAINS is set in Replit dev/production.
+    // Fall back to the request origin for local development.
     const origin =
-      process.env.REPLIT_DOMAINS
+      process.env.APP_URL ||
+      (process.env.REPLIT_DOMAINS
         ? `https://${process.env.REPLIT_DOMAINS.split(",")[0]}`
-        : req.headers.origin ?? "http://localhost:3000";
+        : (req.headers.origin ?? "http://localhost:3000"));
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
