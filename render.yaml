@@ -7,7 +7,7 @@ services:
       pnpm install --frozen-lockfile &&
       pnpm run typecheck:libs &&
       pnpm --filter @workspace/vilo-web run build &&
-      pnpm --filter @workspace/api-server run build &&
+      pnpm --filter @workspace/api-server run build
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     envVars:
       - key: NODE_VERSION
