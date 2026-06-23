@@ -9,7 +9,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -24,9 +23,17 @@ const checkoutSchema = z.object({
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
+function formatPhoneDisplay(digits: string): string {
+  const d = digits.replace(/\D/g, "").slice(0, 10);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
+  return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+}
+
 export function CheckoutForm() {
   const { toast } = useToast();
   const createCheckout = useCreateCheckout();
+  const [phoneDisplay, setPhoneDisplay] = useState("");
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -36,6 +43,12 @@ export function CheckoutForm() {
       userPhone: "",
     },
   });
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+    setPhoneDisplay(formatPhoneDisplay(digits));
+    form.setValue("userPhone", digits);
+  };
 
   const onSubmit = (data: CheckoutFormValues) => {
     createCheckout.mutate(
@@ -66,11 +79,11 @@ export function CheckoutForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input 
-                    placeholder="YOUR NAME" 
-                    className="h-14 bg-background/50 border-border/50 text-lg uppercase tracking-wider backdrop-blur-md focus:border-primary/50 transition-colors" 
+                  <Input
+                    placeholder="YOUR NAME"
+                    className="h-14 bg-background/50 border-border/50 text-lg uppercase tracking-wider backdrop-blur-md focus:border-primary/50 transition-colors"
                     data-testid="input-name"
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -84,12 +97,12 @@ export function CheckoutForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input 
-                    type="email" 
-                    placeholder="EMAIL ADDRESS" 
-                    className="h-14 bg-background/50 border-border/50 text-lg uppercase tracking-wider backdrop-blur-md focus:border-primary/50 transition-colors" 
+                  <Input
+                    type="email"
+                    placeholder="EMAIL ADDRESS"
+                    className="h-14 bg-background/50 border-border/50 text-lg uppercase tracking-wider backdrop-blur-md focus:border-primary/50 transition-colors"
                     data-testid="input-email"
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -100,15 +113,16 @@ export function CheckoutForm() {
           <FormField
             control={form.control}
             name="userPhone"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormControl>
-                  <Input 
-                    type="tel" 
-                    placeholder="CURRENT PHONE (OPTIONAL)" 
-                    className="h-14 bg-background/50 border-border/50 text-lg uppercase tracking-wider backdrop-blur-md focus:border-primary/50 transition-colors" 
+                  <Input
+                    type="tel"
+                    placeholder="(555) 555-5555  OPTIONAL"
+                    value={phoneDisplay}
+                    onChange={handlePhoneChange}
+                    className="h-14 bg-background/50 border-border/50 text-lg tracking-wider backdrop-blur-md focus:border-primary/50 transition-colors"
                     data-testid="input-phone"
-                    {...field} 
                   />
                 </FormControl>
                 <FormMessage />
@@ -117,8 +131,8 @@ export function CheckoutForm() {
           />
         </div>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={createCheckout.isPending}
           className="w-full h-16 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary/90 uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95 shadow-[0_0_40px_rgba(20,255,100,0.3)] hover:shadow-[0_0_60px_rgba(20,255,100,0.5)]"
           data-testid="button-submit-checkout"
