@@ -1,5 +1,5 @@
 kind = "web"
-previewPath = "/"
+previewPath = "/viloai"
 title = "Vilo AI"
 version = "1.0.0"
 id = "artifacts/vilo-web"
@@ -11,7 +11,7 @@ version = "1.0.0"
 
 [[services]]
 name = "web"
-paths = [ "/" ]
+paths = [ "/viloai" ]
 localPort = 22983
 
 [services.development]
@@ -28,4 +28,4 @@ to = "/index.html"
 
 [services.env]
 PORT = "22983"
-BASE_PATH = "/"
+BASE_PATH = "/viloai"
