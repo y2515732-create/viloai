@@ -18,6 +18,7 @@ export interface CheckoutInput {
 
 export interface CheckoutResult {
   url: string;
+  sessionId: string;
 }
 
 export type ProvisioningStatusStatus = typeof ProvisioningStatusStatus[keyof typeof ProvisioningStatusStatus];

@@ -1,11 +1,18 @@
+import { useEffect } from "react";
 import { useGetProvisioningStatus, getGetProvisioningStatusQueryKey } from "@workspace/api-client-react";
 import { Loader2, CheckCircle2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 
 export default function Success() {
-  const searchParams = new URLSearchParams(window.location.search);
-  const sessionId = searchParams.get("session_id") || "";
+  const sessionId = sessionStorage.getItem("vilo_session_id") ?? "";
+
+  // Clean any leftover query params from the URL bar immediately
+  useEffect(() => {
+    if (window.location.search) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
 
   const { data, isLoading } = useGetProvisioningStatus(sessionId, {
     query: {
@@ -15,12 +22,19 @@ export default function Success() {
     },
   });
 
+  // Clear sessionStorage once the number is active so a refresh shows "no session"
+  useEffect(() => {
+    if (data?.status === "active") {
+      sessionStorage.removeItem("vilo_session_id");
+    }
+  }, [data?.status]);
+
   if (!sessionId) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
         <div className="max-w-md text-center">
           <h1 className="text-2xl font-bold uppercase tracking-tight mb-4 text-destructive">Invalid Request</h1>
-          <p className="text-muted-foreground mb-8">No session found in the URL.</p>
+          <p className="text-muted-foreground mb-8">No session found. Please complete checkout first.</p>
           <Link href="/">
             <Button className="w-full font-bold uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90">
               Return Home
@@ -49,7 +63,7 @@ export default function Success() {
             </div>
 
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-tight mb-4">Provisioning</h1>
+              <h1 className="text-3xl font-black uppercase tracking-tight mb-4">Activating</h1>
               <p className="text-muted-foreground">
                 We are configuring your Vilo agent and acquiring your dedicated phone number. This usually takes less than 30 seconds.
               </p>
@@ -105,7 +119,7 @@ export default function Success() {
             </div>
 
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-tight mb-4">Provisioning Failed</h1>
+              <h1 className="text-3xl font-black uppercase tracking-tight mb-4">Setup Failed</h1>
               <p className="text-muted-foreground mb-8">
                 Something went wrong while setting up your number. Please contact support.
               </p>

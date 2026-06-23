@@ -185,9 +185,11 @@ components:
 
     CheckoutResult:
       type: object
-      required: [url]
+      required: [url, sessionId]
       properties:
         url:
+          type: string
+        sessionId:
           type: string
 
     ProvisioningStatus:

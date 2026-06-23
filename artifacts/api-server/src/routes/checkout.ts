@@ -47,7 +47,7 @@ router.post("/checkout", checkoutLimiter, async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/success`,
       cancel_url: `${origin}/cancel`,
       // Fix #3: Always collect email via Stripe's built-in collector AND
       // store it in metadata so the webhook never has to rely solely on
@@ -60,7 +60,7 @@ router.post("/checkout", checkoutLimiter, async (req, res) => {
       },
     });
 
-    res.json({ url: session.url });
+    res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
     req.log.error({ err }, "Failed to create checkout session");
     res.status(500).json({ error: "Failed to create checkout session" });

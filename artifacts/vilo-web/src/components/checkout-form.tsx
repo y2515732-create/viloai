@@ -42,6 +42,7 @@ export function CheckoutForm() {
       { data },
       {
         onSuccess: (result) => {
+          sessionStorage.setItem("vilo_session_id", result.sessionId);
           window.location.href = result.url;
         },
         onError: () => {

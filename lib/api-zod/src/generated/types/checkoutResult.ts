@@ -8,4 +8,5 @@
 
 export interface CheckoutResult {
   url: string;
+  sessionId: string;
 }
