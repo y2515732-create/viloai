@@ -67,6 +67,11 @@ export interface AdminUsersResult {
   total: number;
 }
 
+export interface RetryResult {
+  success: boolean;
+  message: string;
+}
+
 export interface ErrorResponse {
   error: string;
 }

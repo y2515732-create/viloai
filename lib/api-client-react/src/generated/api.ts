@@ -25,7 +25,8 @@ import type {
   CheckoutResult,
   ErrorResponse,
   HealthStatus,
-  ProvisioningStatus
+  ProvisioningStatus,
+  RetryResult
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -268,6 +269,77 @@ export function useGetProvisioningStatus<TData = Awaited<ReturnType<typeof getPr
 
 
 
+
+export const getRetryProvisioningUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/users/${id}/retry`
+}
+
+/**
+ * Resets a failed user back to pending and re-triggers Twilio + ElevenLabs provisioning. Requires Authorization header with admin password.
+ * @summary Retry provisioning for a failed user
+ */
+export const retryProvisioning = async (id: number, options?: RequestInit): Promise<RetryResult> => {
+
+  return customFetch<RetryResult>(getRetryProvisioningUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getRetryProvisioningMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retryProvisioning>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof retryProvisioning>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['retryProvisioning'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof retryProvisioning>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  retryProvisioning(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RetryProvisioningMutationResult = NonNullable<Awaited<ReturnType<typeof retryProvisioning>>>
+
+    export type RetryProvisioningMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Retry provisioning for a failed user
+ */
+export const useRetryProvisioning = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof retryProvisioning>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof retryProvisioning>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getRetryProvisioningMutationOptions(options));
+    }
 
 export const getListAdminUsersUrl = () => {
 

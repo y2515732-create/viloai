@@ -48,6 +48,24 @@ export const GetProvisioningStatusResponse = zod.object({
 
 
 /**
+ * Resets a failed user back to pending and re-triggers Twilio + ElevenLabs provisioning. Requires Authorization header with admin password.
+ * @summary Retry provisioning for a failed user
+ */
+export const RetryProvisioningParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const RetryProvisioningHeader = zod.object({
+  "Authorization": zod.string().describe('Bearer <ADMIN_PASSWORD>')
+})
+
+export const RetryProvisioningResponse = zod.object({
+  "success": zod.boolean(),
+  "message": zod.string()
+})
+
+
+/**
  * Returns all Vilo users. Requires Authorization header with admin password.
  * @summary List all provisioned users
  */

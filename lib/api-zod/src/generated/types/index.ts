@@ -15,3 +15,4 @@ export * from './errorResponse';
 export * from './healthStatus';
 export * from './provisioningStatus';
 export * from './provisioningStatusStatus';
+export * from './retryResult';

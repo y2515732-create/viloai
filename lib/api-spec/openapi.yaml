@@ -91,6 +91,50 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /admin/users/{id}/retry:
+    post:
+      operationId: retryProvisioning
+      tags: [admin]
+      summary: Retry provisioning for a failed user
+      description: Resets a failed user back to pending and re-triggers Twilio + ElevenLabs provisioning. Requires Authorization header with admin password.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: "Bearer <ADMIN_PASSWORD>"
+      responses:
+        "200":
+          description: Retry started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RetryResult"
+        "400":
+          description: User is not in failed status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /admin/users:
     get:
       operationId: listAdminUsers
@@ -192,6 +236,15 @@ components:
             $ref: "#/components/schemas/AdminViloUser"
         total:
           type: integer
+
+    RetryResult:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
 
     ErrorResponse:
       type: object
