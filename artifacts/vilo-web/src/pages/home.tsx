@@ -4,19 +4,29 @@ export default function Home() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async () => {
+    setError("");
     if (!name || !email || !phone) {
-      alert("Please fill in all fields including your phone number.");
+      setError("Please fill in all fields including your phone number.");
       return;
     }
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, phone }),
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError("Error: " + JSON.stringify(data));
+      }
+    } catch (e) {
+      setError("Network error: " + String(e));
+    }
   };
 
   return (
@@ -30,6 +40,7 @@ export default function Home() {
       <p style={{ color: "#aaa", textAlign: "center", maxWidth: "500px", marginBottom: "50px", fontSize: "18px", lineHeight: 1.6 }}>
         Vilo checks in on you every day. A real phone call. A real conversation. Always there for you — for just $3.98.
       </p>
+      {error && <p style={{ color: "red", marginBottom: "20px", textAlign: "center" }}>{error}</p>}
       <div style={{ width: "100%", maxWidth: "400px", display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
         <input placeholder="YOUR NAME" value={name} onChange={e => setName(e.target.value)} style={{ background: "#111", border: "1px solid #333", color: "#fff", padding: "16px", fontSize: "14px", letterSpacing: "2px", outline: "none" }} />
         <input placeholder="EMAIL ADDRESS" value={email} onChange={e => setEmail(e.target.value)} style={{ background: "#111", border: "1px solid #333", color: "#fff", padding: "16px", fontSize: "14px", letterSpacing: "2px", outline: "none" }} />
