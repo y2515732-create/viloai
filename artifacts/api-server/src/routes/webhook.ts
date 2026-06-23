@@ -15,7 +15,7 @@ type SimpleLog = {
   error: (obj: object, msg: string) => void;
 };
 
-router.post("/webhook", async (req, res) => {
+router.post("/", async (req, res) => {
   const sig = req.headers["stripe-signature"];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
