@@ -1,4 +1,5 @@
 import Telnyx from "telnyx";
+const telnyxClient = new Telnyx.default(process.env.TELNYX_API_KEY!);
 import { db, usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
@@ -26,12 +27,12 @@ export async function provisionViloNumber(
   // 2. Make outbound call to user via Telnyx
   if (userPhone && process.env.TELNYX_PHONE_NUMBER) {
     const call = await telnyxClient.calls.create({
-      to: userPhone,
-      from: process.env.TELNYX_PHONE_NUMBER,
-      connection_id: process.env.TELNYX_APP_ID,
-      webhook_url: `${process.env.VILO_AGENT_URL}/incoming-call`,
-    });
-    log.info({ callId: call.data.id, userPhone }, "Outbound call initiated");
+  connection_id: process.env.TELNYX_APP_ID!,
+  to: userPhone,
+  from: process.env.TELNYX_PHONE_NUMBER!,
+  webhook_url: `${process.env.VILO_AGENT_URL}/incoming-call`,
+});
+log.info({ callId: call.data?.call_leg_id, userPhone }, "Outbound call initiated");
   } else {
     log.error({}, "No phone number or Telnyx number configured");
   }
