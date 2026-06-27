@@ -22,6 +22,7 @@
     "pino": "^9.14.0",
     "pino-http": "^10.5.0",
     "stripe": "^22.2.2",
+    "telnyx": "^7.2.0",
     "twilio": "^6.0.2"
   },
   "devDependencies": {
