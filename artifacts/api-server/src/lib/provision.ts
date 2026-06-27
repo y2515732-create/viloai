@@ -1,4 +1,4 @@
-import twilio from "twilio";
+import Telnyx from "telnyx";
 import { db, usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
@@ -13,10 +13,7 @@ export async function provisionViloNumber(
   userName: string,
   userPhone: string,
 ) {
-  const twilioClient = twilio(
-    process.env.TWILIO_ACCOUNT_SID,
-    process.env.TWILIO_AUTH_TOKEN,
-  );
+  const telnyxClient = new Telnyx(process.env.TELNYX_API_KEY!);
 
   // 1. Mark user as active in DB
   await db
@@ -26,16 +23,17 @@ export async function provisionViloNumber(
 
   log.info({ userEmail }, "User marked active");
 
-  // 2. Make outbound call to user via Twilio
-  if (userPhone && process.env.TWILIO_MAIN_NUMBER) {
-    const call = await twilioClient.calls.create({
+  // 2. Make outbound call to user via Telnyx
+  if (userPhone && process.env.TELNYX_PHONE_NUMBER) {
+    const call = await telnyxClient.calls.create({
       to: userPhone,
-      from: process.env.TWILIO_MAIN_NUMBER,
-      url: `${process.env.VILO_AGENT_URL}/incoming-call`,
+      from: process.env.TELNYX_PHONE_NUMBER,
+      connection_id: process.env.TELNYX_APP_ID,
+      webhook_url: `${process.env.VILO_AGENT_URL}/incoming-call`,
     });
-    log.info({ callSid: call.sid, userPhone }, "Outbound call initiated");
+    log.info({ callId: call.data.id, userPhone }, "Outbound call initiated");
   } else {
-    log.error({}, "No phone number or Twilio number configured");
+    log.error({}, "No phone number or Telnyx number configured");
   }
 
   log.info({ userEmail }, "Vilo outbound call completed");
