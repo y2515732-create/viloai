@@ -1,4 +1,4 @@
-const CACHE_NAME = "vilo-ai-v1";
+const CACHE_NAME = "veliq-v1";
 
 // Static assets to pre-cache on install
 const PRECACHE_URLS = ["/", "/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
