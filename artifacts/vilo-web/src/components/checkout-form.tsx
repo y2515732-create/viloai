@@ -90,7 +90,6 @@ export function CheckoutForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="userEmail"
@@ -109,7 +108,6 @@ export function CheckoutForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="userPhone"
@@ -118,7 +116,7 @@ export function CheckoutForm() {
                 <FormControl>
                   <Input
                     type="tel"
-                    placeholder="(555) 555-5555  OPTIONAL"
+                    placeholder="(555) 555-5555 OPTIONAL"
                     value={phoneDisplay}
                     onChange={handlePhoneChange}
                     className="h-14 bg-background/50 border-border/50 text-lg tracking-wider backdrop-blur-md focus:border-primary/50 transition-colors"
@@ -130,7 +128,6 @@ export function CheckoutForm() {
             )}
           />
         </div>
-
         <Button
           type="submit"
           disabled={createCheckout.isPending}
@@ -142,7 +139,7 @@ export function CheckoutForm() {
           ) : (
             <ArrowRight className="mr-2 h-6 w-6" />
           )}
-          Get Your AI Number — $3.98
+          Get Your AI Number — $2.99
         </Button>
         <p className="text-center text-sm text-muted-foreground font-mono mt-4 uppercase tracking-widest">
           One-time payment. No subscriptions.
