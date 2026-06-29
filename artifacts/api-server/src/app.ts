@@ -39,7 +39,7 @@ app.use("/api", router);
 
 // In production, serve the Vite-built frontend and handle SPA routing
 if (process.env.NODE_ENV === "production") {
-  const frontendDist = path.join(process.cwd(), "artifacts", "vilo-web", "dist", "public");
+  const frontendDist = path.join(process.cwd(), "..", "vilo-web", "dist", "public");
 
   if (existsSync(frontendDist)) {
     app.use(express.static(frontendDist));
